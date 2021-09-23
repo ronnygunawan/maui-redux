@@ -22,7 +22,7 @@ public record FooStore() : Store<int, IFooEvent>(
             FooDecremented => state - 1,
             FooIncrementedBy { Value: var val } => state + val,
             FooReset => 0,
-            _ => state_
+            _ => state
         }.
     initialValue: 0
 );
@@ -80,7 +80,7 @@ public record PersistedFooStore() : PreferenceStore<int, IFooEvent>(
             FooDecremented => state - 1,
             FooIncrementedBy { Value: var val } => state + val,
             FooReset => 0,
-            _ => state_
+            _ => state
         }.
     initialValue: 0
 );
