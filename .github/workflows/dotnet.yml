@@ -26,6 +26,11 @@ jobs:
       run: dotnet workload install android
     - name: Install maccatalyst workload
       run: dotnet workload install maccatalyst
+    - name: Setup JDK 11
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'zulu'
+        java-version: '11'
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
