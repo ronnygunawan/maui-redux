@@ -18,8 +18,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.100-rc.1.21458.32
-    - name: Install MAUI Windows Workload
+    - name: Install workloads
       run: dotnet workload install maui-windows
+      run: dotnet workload install ios
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
