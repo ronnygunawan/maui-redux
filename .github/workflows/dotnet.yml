@@ -22,6 +22,8 @@ jobs:
       run: dotnet workload install maui-windows
     - name: Install ios workload
       run: dotnet workload install ios
+    - name: Install android workload
+      run: dotnet workload install android
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
