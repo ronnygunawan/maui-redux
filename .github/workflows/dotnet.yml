@@ -24,6 +24,8 @@ jobs:
       run: dotnet workload install ios
     - name: Install android workload
       run: dotnet workload install android
+    - name: Install maccatalyst workload
+      run: dotnet workload install maccatalyst
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
