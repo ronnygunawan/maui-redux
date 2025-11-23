@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Linq;
-using FluentAssertions;
+using Shouldly;
 using Moq;
 using Moq.Protected;
 using RG.MAUI.Redux;
@@ -58,29 +58,29 @@ namespace Tests {
 			}
 
 			using (PreferenceStore<string> store = new MockPreferenceStore<string>("foo", STRING_REDUCER, "", MockSubject())) {
-				store.Key.Should().Be("foo");
-				store.State.Should().Be("");
+				store.Key.ShouldBe("foo");
+				store.State.ShouldBe("");
 				store.Dispatch(new SetTo("asd"));
-				store.State.Should().Be("asd");
+				store.State.ShouldBe("asd");
 				store.Dispatch(new SetTo("") with { Value = "fgh" });
-				store.State.Should().Be("fgh");
+				store.State.ShouldBe("fgh");
 				store.Dispatch(new Clear());
-				store.State.Should().Be("");
+				store.State.ShouldBe("");
 				store.Dispatch(new SetTo("ijk"));
-				store.State.Should().Be("ijk");
+				store.State.ShouldBe("ijk");
 				store.Dispatch(new Unknown());
-				store.State.Should().Be("ijk");
+				store.State.ShouldBe("ijk");
 			}
 
 			using (PreferenceStore<string> store = new MockPreferenceStore<string>("foo", STRING_REDUCER, "", MockSubject())) {
-				store.State.Should().Be("ijk");
+				store.State.ShouldBe("ijk");
 				List<string> emittedValues = new();
 				using IDisposable subscription = (from value in store
 												  where value.Length == 3
 												  select value).Subscribe(value => emittedValues.Add(value));
-				emittedValues.Should().ContainInOrder("ijk");
+				emittedValues.ShouldBe(new[] { "ijk" });
 				store.Dispatch(new SetTo("1234"));
-				emittedValues.Should().ContainInOrder("ijk");
+				emittedValues.ShouldBe(new[] { "ijk" });
 			}
 		}
 

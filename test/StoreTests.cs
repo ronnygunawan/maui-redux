@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentAssertions;
+using Shouldly;
 using RG.MAUI.Redux;
 using System.Reactive.Linq;
 using Xunit;
@@ -38,33 +38,33 @@ namespace Tests {
 		[Fact]
 		public void CanCreateStoreOfReferenceType() {
 			using Store<object> store = new(OBJECT_REDUCER, OBJECT_A);
-			store.State.Should().Be(OBJECT_A);
+			store.State.ShouldBe(OBJECT_A);
 			store.Dispatch(new SetToObjectA());
-			store.State.Should().Be(OBJECT_A);
+			store.State.ShouldBe(OBJECT_A);
 			store.Dispatch(new SetToObjectB());
-			store.State.Should().Be(OBJECT_B);
+			store.State.ShouldBe(OBJECT_B);
 			store.Dispatch(new SetToObject(OBJECT_C));
-			store.State.Should().Be(OBJECT_C);
+			store.State.ShouldBe(OBJECT_C);
 			store.Dispatch(new SetToObject(OBJECT_C) with { Obj = OBJECT_A });
-			store.State.Should().Be(OBJECT_A);
+			store.State.ShouldBe(OBJECT_A);
 			store.Dispatch(new SetToZero());
-			store.State.Should().Be(OBJECT_A);
+			store.State.ShouldBe(OBJECT_A);
 		}
 
 		[Fact]
 		public void CanCreateStoreOfValueType() {
 			using Store<int> store = new(INT_REDUCER, 0);
-			store.State.Should().Be(0);
+			store.State.ShouldBe(0);
 			store.Dispatch(new SetTo(10));
-			store.State.Should().Be(10);
+			store.State.ShouldBe(10);
 			store.Dispatch(new SetTo(10) with { Value = 20 });
-			store.State.Should().Be(20);
+			store.State.ShouldBe(20);
 			store.Dispatch(new Negate());
-			store.State.Should().Be(-20);
+			store.State.ShouldBe(-20);
 			store.Dispatch(new SetToZero());
-			store.State.Should().Be(0);
+			store.State.ShouldBe(0);
 			store.Dispatch(new SetToObjectA());
-			store.State.Should().Be(0);
+			store.State.ShouldBe(0);
 		}
 
 		[Fact]
@@ -72,19 +72,19 @@ namespace Tests {
 			using Store<int> store = new(INT_REDUCER, 0);
 			List<int> emittedValues = new();
 			IDisposable subscription = store.Subscribe(value => emittedValues.Add(value));
-			emittedValues.Should().ContainInOrder(0);
+			emittedValues.ShouldBe(new[] { 0 });
 			store.Dispatch(new SetTo(20));
-			emittedValues.Should().ContainInOrder(0, 20);
+			emittedValues.ShouldBe(new[] { 0, 20 });
 			List<int> emittedValues2 = new();
 			IDisposable subscription2 = store.Subscribe(value => emittedValues2.Add(value));
-			emittedValues2.Should().ContainInOrder(20);
+			emittedValues2.ShouldBe(new[] { 20 });
 			store.Dispatch(new Negate());
-			emittedValues.Should().ContainInOrder(0, 20, -20);
-			emittedValues2.Should().ContainInOrder(20, -20);
+			emittedValues.ShouldBe(new[] { 0, 20, -20 });
+			emittedValues2.ShouldBe(new[] { 20, -20 });
 			subscription.Dispose();
 			store.Dispatch(new SetToZero());
-			emittedValues.Should().ContainInOrder(0, 20, -20);
-			emittedValues2.Should().ContainInOrder(20, -20, 0);
+			emittedValues.ShouldBe(new[] { 0, 20, -20 });
+			emittedValues2.ShouldBe(new[] { 20, -20, 0 });
 			subscription2.Dispose();
 		}
 
@@ -95,15 +95,15 @@ namespace Tests {
 			using IDisposable subscription = (from value in store
 											  where value % 2 == 0
 											  select value / 2).Subscribe(value => emittedValues.Add(value));
-			emittedValues.Should().ContainInOrder(0);
+			emittedValues.ShouldBe(new[] { 0 });
 			store.Dispatch(new SetTo(3));
-			emittedValues.Should().ContainInOrder(0);
+			emittedValues.ShouldBe(new[] { 0 });
 			store.Dispatch(new Negate());
-			emittedValues.Should().ContainInOrder(0);
+			emittedValues.ShouldBe(new[] { 0 });
 			store.Dispatch(new SetToZero());
-			emittedValues.Should().ContainInOrder(0, 0);
+			emittedValues.ShouldBe(new[] { 0, 0 });
 			store.Dispatch(new SetTo(20));
-			emittedValues.Should().ContainInOrder(0, 0, 10);
+			emittedValues.ShouldBe(new[] { 0, 0, 10 });
 		}
 	}
 }
