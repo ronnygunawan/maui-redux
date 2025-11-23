@@ -6,34 +6,45 @@ on:
   pull_request:
     branches: [ master ]
 
+permissions:
+  contents: read
+
 jobs:
   build:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        include:
+          - os: macos-latest
+            workloads: 'ios android maccatalyst'
+            build-args: ''
+          - os: windows-latest
+            workloads: 'android maui-windows'
+            build-args: ''
+          - os: ubuntu-latest
+            workloads: 'android maui-tizen'
+            build-args: ''
+      fail-fast: false
 
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
     - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 6.0.100-rc.1.21458.32
-    - name: Install maui-windows workload
-      run: dotnet workload install maui-windows
-    - name: Install ios workload
-      run: dotnet workload install ios
-    - name: Install android workload
-      run: dotnet workload install android
-    - name: Install maccatalyst workload
-      run: dotnet workload install maccatalyst
+        dotnet-version: 10.0.x
     - name: Setup JDK 11
       uses: actions/setup-java@v2
       with:
         distribution: 'zulu'
         java-version: '11'
+    - name: Install MAUI workloads
+      run: dotnet workload install ${{ matrix.workloads }}
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore ${{ matrix.build-args }}
     - name: Test
       run: dotnet test --no-build --verbosity normal
