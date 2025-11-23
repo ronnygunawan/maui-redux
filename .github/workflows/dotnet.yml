@@ -10,14 +10,17 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macos-latest, windows-latest]
+        os: [macos-latest, windows-latest, ubuntu-latest]
         include:
           - os: macos-latest
             workloads: 'ios android maccatalyst'
             build-args: ''
           - os: windows-latest
-            workloads: 'android'
-            build-args: '-p:TargetFrameworks=net10.0;net10.0-android'
+            workloads: 'android maui-windows'
+            build-args: ''
+          - os: ubuntu-latest
+            workloads: 'android maui-tizen'
+            build-args: ''
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
